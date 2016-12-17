@@ -65,3 +65,39 @@ const slice = (i, k, list) => list.slice(i, k)
 const rotate = (n, list) => flatten(reverse(split(n, list)))
 
 const removeAt = (k, list) => [...slice(0, k, list), ...slice(k + 1, length(list), list)]
+
+const insertAt = (el, k, list) => {
+  const [left, right] = split(k, list)
+  return [...left, el, ...right]
+}
+
+const range = (start, end) => Array.from({ length: end - start + 1 }, (_, i) => start + i)
+
+const randomSelect = (n, list) => {
+    const selected = {}
+    const nextRandomUniq = () => {
+      let i = Math.floor(Math.random() * length(list))
+      return selected[i] ? nextRandomUniq() : selected[i] = true && list[i]
+    }
+
+  return Array.from({ length: n }, () => nextRandomUniq())
+}
+
+const lotto = (n, max) => randomSelect(n, range(1, max))
+
+const randomPermute = list => randomSelect(length(list), list)
+
+const combinations = (k, list) =>
+  k === 1 ?
+    list.map((el) => [el]) :
+    list.slice(0, length(list) - k + 1, list)
+    .reduce((acc, el, i) =>
+      acc.concat(
+        combinations(k - 1, slice(i + 1, length(list), list))
+        .map(subCombo => [el,...subCombo])), [])
+
+
+
+
+const list = [1, 2, 3, 4, 5, 6]
+console.log(combinations(3, list))
