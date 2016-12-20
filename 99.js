@@ -96,8 +96,24 @@ const combinations = (k, list) =>
         combinations(k - 1, slice(i + 1, length(list), list))
         .map(subCombo => [el,...subCombo])), [])
 
+// 27
+const group = (sizes, list) => {
+  if (length(sizes) === 1) {
+    return combinations(sizes[0], list).map(combo => [combo])
+  } else {
+    return combinations(sizes[0], list)
+    .reduce((acc, combo) =>
+      group(
+        sizes.slice(1),
+        list.filter(el => !combo.includes(el))
+      )
+      .reduce((subAcc, subGroup) => subAcc.concat([[combo, ...subGroup]]), acc), []
+    )
+  }
+}
+
+// 28
 
 
-
-const list = [1, 2, 3, 4, 5, 6]
-console.log(combinations(3, list))
+const list = range(1, 3)
+console.log(group([1], list))
