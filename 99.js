@@ -97,23 +97,28 @@ const combinations = (k, list) =>
         .map(subCombo => [el,...subCombo])), [])
 
 // 27
-const group = (sizes, list) => {
-  if (length(sizes) === 1) {
-    return combinations(sizes[0], list).map(combo => [combo])
-  } else {
-    return combinations(sizes[0], list)
+const group = (sizes, list) =>
+  length(sizes) === 1 ?
+    combinations(sizes[0], list)
+    .map(combo => [combo]) :
+    combinations(sizes[0], list)
     .reduce((acc, combo) =>
-      group(
-        sizes.slice(1),
-        list.filter(el => !combo.includes(el))
-      )
-      .reduce((subAcc, subGroup) => subAcc.concat([[combo, ...subGroup]]), acc), []
-    )
-  }
-}
+        group(
+          sizes.slice(1),
+          list.filter(el => !combo.includes(el)))
+        .reduce((subAcc, subGroup) =>
+          subAcc.concat([[combo, ...subGroup]]), acc), [])
 
-// 28
+// 28a
+const lsort = list =>
+  list.sort((x, y) => length(x) <= length(y) ? -1 : 1)
 
-
-const list = range(1, 3)
-console.log(group([1], list))
+// 28b
+const lsortFreq = list =>
+  Object.keys(freqs = list.reduce((acc, x) =>
+    Object.assign(acc, {
+      [length(x)]: acc[length(x)] ? acc[length(x)].concat([x]) : [x] })
+  , {}))
+  .sort((x, y) => x > y ? -1 : 1)
+  .reduce((acc, key) =>
+    acc.concat(freqs[key]), [])
