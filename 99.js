@@ -162,13 +162,12 @@ const isPrime = num =>
     .every(factor => num % factor !== 0)
 
 // 32
-const gcd = (x, y) =>  {
-  [x, y] = x > y ? [x, y] : [y, x]
-  while (x % y) {
-    [x, y] = [y, x % y]
-  }
-  return y
-}
+const gcd = (x, y) =>
+  x > y ?
+    x % y ?
+      gcd(y, x % y) :
+      y :
+    gcd(y, x)
 
 // 33
 const coprime = (x, y) =>
@@ -179,3 +178,15 @@ const phi = m =>
   range(1, m)
   .reduce((acc, k) =>
     acc + (coprime(k, m) ? 1 : 0), 0)
+
+// 35
+const primeFactors = (n, start = 3) =>
+  n / start === 1 ?
+    [start] :
+    n % 2 === 0 ?
+      [2, ...primeFactors(n / 2)] :
+      n % start === 0 ?
+        [start, ...primeFactors(n / start, start)] :
+        primeFactors(n, start + 2)
+
+console.log(primeFactors(100000))
