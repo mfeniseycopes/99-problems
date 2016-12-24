@@ -212,5 +212,7 @@ const phiComparator = n => {
   console.log("--", Date.now() - start, "seconds")
 }
 
-// console.log(gcd(10090, 10090))
-phiComparator(10090)
+// 39
+const primeNumbers = (k, n) =>
+  range(2, n).reduce((sieve, el) =>
+    sieve.filter(x => x === el || x % el !== 0), range(k < 2 ? 2 : k, n))
