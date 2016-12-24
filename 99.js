@@ -216,3 +216,16 @@ const phiComparator = n => {
 const primeNumbers = (k, n) =>
   range(2, n).reduce((sieve, el) =>
     sieve.filter(x => x === el || x % el !== 0), range(k < 2 ? 2 : k, n))
+
+// 40
+const goldbach = n =>
+  [range(2, Math.floor(n / 2))
+  .findIndex(el => isPrime(el) && isPrime(n - el))]
+  .reduce((acc, i) =>
+    [i + 2, n - i - 2], [])
+
+// 41
+const goldbachList = (k, n) =>
+  range(k, n)
+  .filter(el => el % 2 === 0 && el > 2)
+  .map(goldbach)
