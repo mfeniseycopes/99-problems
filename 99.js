@@ -174,19 +174,27 @@ const coprime = (x, y) =>
   gcd(x, y) === 1
 
 // 34
-const phi = m =>
+const totient = m =>
   range(1, m)
   .reduce((acc, k) =>
     acc + (coprime(k, m) ? 1 : 0), 0)
 
 // 35
 const primeFactors = (n, start = 3) =>
-  n / start === 1 ?
-    [start] :
+  n === start ?
+    [n] :
     n % 2 === 0 ?
       [2, ...primeFactors(n / 2)] :
       n % start === 0 ?
         [start, ...primeFactors(n / start, start)] :
         primeFactors(n, start + 2)
 
-console.log(primeFactors(100000))
+// 36
+const primeFactorMultiplicity = (n) =>
+  encode(primeFactors(n))
+
+// 37
+const phi = n =>
+  primeFactorMultiplicity(n)
+  .reduce((acc, [p, m]) =>
+    acc * (p - 1) * Math.pow(p, m - 1), 1)
