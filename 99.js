@@ -163,10 +163,10 @@ const isPrime = num =>
 
 // 32
 const gcd = (x, y) =>
-  x > y ?
-    x % y ?
-      gcd(y, x % y) :
+  x >= y ?
+    x % y === 0 ?
       y :
+      gcd(y, x % y) :
     gcd(y, x)
 
 // 33
@@ -198,3 +198,19 @@ const phi = n =>
   primeFactorMultiplicity(n)
   .reduce((acc, [p, m]) =>
     acc * (p - 1) * Math.pow(p, m - 1), 1)
+
+// 38
+const phiComparator = n => {
+  console.log(`totient(${n})`)
+  let start = Date.now()
+  console.log("--", totient(n))
+  console.log("--", Date.now() - start, "seconds")
+
+  console.log(`phi(${n})`)
+  start = Date.now()
+  console.log("--", phi(n))
+  console.log("--", Date.now() - start, "seconds")
+}
+
+// console.log(gcd(10090, 10090))
+phiComparator(10090)
