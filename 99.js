@@ -287,10 +287,7 @@ const huffmanCodes = (node, encoding = '') =>
     ...huffmanCodes(node.right, encoding + '1')] :
     []
 
-
 const huffman = list =>
   huffmanCodes(
     huffmanTree(
       list.map(el => node(el[0], el[1]))))
-
-console.log(huffman([["a", 45], ["b", 13], ["c", 12], ["d", 16], ["e", 9], ["f", 5]]))
