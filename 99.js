@@ -229,3 +229,68 @@ const goldbachList = (k, n) =>
   range(k, n)
   .filter(el => el % 2 === 0 && el > 2)
   .map(goldbach)
+
+/* LOGIC & CODES */
+
+// 46
+const not = a =>
+  !a
+
+const and = (a, b) =>
+  a && b
+
+const or = (a, b) =>
+  a || b
+
+const nand = (a, b) =>
+  not(and(a, b))
+
+const nor = (a, b) =>
+  not(or(a, b))
+
+const xor = (a, b) =>
+  and(or(a, b), nand(a, b))
+
+const impl = (a, b) =>
+  or(not(a), b)
+
+const eq = (a, b) =>
+  or(and(a, b), nand(a, b))
+
+// 47, 48 (no custom operators in javascript)
+
+// 49
+const grey = n =>
+  range(0, Math.pow(2, n) - 1)
+  .map(k => k ^ (k >> 1))
+  .map(k => new Array(n).join('0') + k.toString(2))
+  .map(k => k.substr(-n))
+
+// 50
+const node = (val, freq, left = null, right = null) =>
+  ({ val, freq, left, right })
+
+const huffmanTree = list =>
+  length(list) <= 1 ?
+    list[0] :
+    huffmanTree(
+      list.sort((x, y) => x.freq - y.freq)
+      .reduce((acc, el, i, arr) =>
+        i < 2 ?
+          acc || [node(null, arr[0].freq + arr[1].freq, arr[0], arr[1])] :
+          [...acc, el], null))
+
+const huffmanCodes = (node, encoding = '') =>
+  node !== null ?
+    [...(node.val ? [[node.val, encoding]]: []),
+    ...huffmanCodes(node.left, encoding + '0'),
+    ...huffmanCodes(node.right, encoding + '1')] :
+    []
+
+
+const huffman = list =>
+  huffmanCodes(
+    huffmanTree(
+      list.map(el => node(el[0], el[1]))))
+
+console.log(huffman([["a", 45], ["b", 13], ["c", 12], ["d", 16], ["e", 9], ["f", 5]]))
