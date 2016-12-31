@@ -267,7 +267,7 @@ const grey = n =>
   .map(k => k.substr(-n))
 
 // 50
-const node = (val, freq, left = null, right = null) =>
+const huffmanNode = (val, freq, left = null, right = null) =>
   ({ val, freq, left, right })
 
 const huffmanTree = list =>
@@ -277,17 +277,65 @@ const huffmanTree = list =>
       list.sort((x, y) => x.freq - y.freq)
       .reduce((acc, el, i, arr) =>
         i < 2 ?
-          acc || [node(null, arr[0].freq + arr[1].freq, arr[0], arr[1])] :
+          acc || [huffmanNode(null, arr[0].freq + arr[1].freq, arr[0], arr[1])] :
           [...acc, el], null))
 
-const huffmanCodes = (node, encoding = '') =>
-  node !== null ?
-    [...(node.val ? [[node.val, encoding]]: []),
-    ...huffmanCodes(node.left, encoding + '0'),
-    ...huffmanCodes(node.right, encoding + '1')] :
+const huffmanCodes = (huffmanNode, encoding = '') =>
+  huffmanNode !== null ?
+    [...(huffmanNode.val ? [[huffmanNode.val, encoding]]: []),
+    ...huffmanCodes(huffmanNode.left, encoding + '0'),
+    ...huffmanCodes(huffmanNode.right, encoding + '1')] :
     []
 
 const huffman = list =>
   huffmanCodes(
     huffmanTree(
-      list.map(el => node(el[0], el[1]))))
+      list.map(el => huffmanNode(el[0], el[1]))))
+
+/* BINARY TREES */
+
+const newNode = (val, left = null, right = null) => ({
+  val, left, right
+})
+
+const flatMap = (node, cb) =>
+  node ?
+    [...flatMap(node.left, cb), cb(node), ...flatMap(node.right, cb)] :
+    []
+
+// 55
+const cBalanced = (n, val) =>
+  n === 0 ?
+    null :
+    newNode(
+      val,
+      cBalanced(Math.ceil((n - 1) / 2), val),
+      cBalanced(Math.floor((n - 1) / 2), val))
+
+// 56
+const isMirror = (left, right) =>
+  and(left === null, right === null) ?
+    true :
+    and(left !== null, right !== null) ?
+      and(
+        isMirror(left.left, right.right),
+        isMirror(left.right, right.left)) :
+      false
+
+const isSymmetric = node =>
+  isMirror(node.left, node.right)
+
+// 57
+const addValue = (val, node = null) =>
+  node === null ? 
+    newNode(val) :
+    node.val === val ?
+      node :
+      node.val > val ? 
+        newNode(node.val, addValue(val, node.left), node.right) :
+        newNode(node.val, node.left, addValue(val, node.right))  
+
+const constructTree = list =>
+  list.reduce((acc, val) =>
+    addValue(val, acc), null)
+
