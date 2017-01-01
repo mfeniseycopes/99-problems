@@ -1,5 +1,6 @@
 /* LIST OPERATIONS */
 
+
 // 1
 const last = list =>
   list[list.length - 1] || null
@@ -304,38 +305,60 @@ const flatMap = (node, cb) =>
     []
 
 // 55
+const oneFromEach = list =>
+  list.reduce((acc, sub) => {
+    return sub.reduce((subAcc, el) => {
+      return [...subAcc, ...(length(acc) === 0 ?
+       [[el]] :
+       acc.map(thusFar => [...thusFar, el]))]
+    }, [])
+  }, [])
+
+const permutations = list => 
+  length(list) <= 1 ?
+    [list] :
+    permutations(slice(1, length(list), list))
+    .reduce((acc, perm) =>
+      [ ...acc, 
+        ...(range(0, length(perm)).map(i => insertAt(list[0], i, perm)))
+      ], [])
+
 const cBalanced = (n, val) =>
-  n === 0 ?
-    null :
-    newNode(
-      val,
-      cBalanced(Math.ceil((n - 1) / 2), val),
-      cBalanced(Math.floor((n - 1) / 2), val))
+  n <= 0 ?
+    [null] : 
+    ((n - 1) % 2 === 0 ?
+      oneFromEach([cBalanced((n - 1) / 2, val), cBalanced((n - 1) / 2, val)]) : 
+      oneFromEach([cBalanced(n / 2, val), cBalanced(n / 2 - 1, val)])
+      .reduce((acc, one) => [...acc, ...permutations(one)], [])
+    )
+    .reduce((acc, [left, right]) => 
+      [ ...acc, newNode(val, left, right) ], [])
 
 // 56
 const isMirror = (left, right) =>
   and(left === null, right === null) ?
     true :
     and(left !== null, right !== null) ?
-      and(
-        isMirror(left.left, right.right),
-        isMirror(left.right, right.left)) :
+      and(isMirror(left.left, right.right), isMirror(left.right, right.left)) :
       false
 
 const isSymmetric = node =>
   isMirror(node.left, node.right)
 
 // 57
-const addValue = (val, node = null) =>
-  node === null ? 
+const addValue = (node, val) =>
+  node === null ?
     newNode(val) :
     node.val === val ?
       node :
-      node.val > val ? 
-        newNode(node.val, addValue(val, node.left), node.right) :
-        newNode(node.val, node.left, addValue(val, node.right))  
+      node.val > val ?
+        newNode(node.val, addValue(node.left, val), node.right) :
+        newNode(node.val, node.left, addValue(node.right, val))
 
 const constructTree = list =>
-  list.reduce((acc, val) =>
-    addValue(val, acc), null)
+  list.reduce(addValue, null)
+
+// 58
+const symmetricBalancedTrees = (n, val) =>
+  n % 2 === 0 ? [] : cBalanced(n, val).filter(isSymmetric)
 
