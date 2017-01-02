@@ -1,6 +1,5 @@
 /* LIST OPERATIONS */
 
-
 // 1
 const last = list =>
   list[list.length - 1] || null
@@ -293,46 +292,35 @@ const huffman = list =>
     huffmanTree(
       list.map(el => huffmanNode(el[0], el[1]))))
 
+
 /* BINARY TREES */
 
 const newNode = (val, left = null, right = null) => ({
   val, left, right
 })
 
-const flatMap = (node, cb) =>
-  node ?
-    [...flatMap(node.left, cb), cb(node), ...flatMap(node.right, cb)] :
-    []
+Array.prototype.flatMap = function(cb) {
+  return [].concat.apply([], this.map(cb))
+}
 
 // 55
-const oneFromEach = list =>
-  list.reduce((acc, sub) => {
-    return sub.reduce((subAcc, el) => {
-      return [...subAcc, ...(length(acc) === 0 ?
-       [[el]] :
-       acc.map(thusFar => [...thusFar, el]))]
-    }, [])
-  }, [])
+const cBalanced = (n, val) => {
+  const memo = { 0: [null] }
 
-const permutations = list => 
-  length(list) <= 1 ?
-    [list] :
-    permutations(slice(1, length(list), list))
-    .reduce((acc, perm) =>
-      [ ...acc, 
-        ...(range(0, length(perm)).map(i => insertAt(list[0], i, perm)))
-      ], [])
-
-const cBalanced = (n, val) =>
-  n <= 0 ?
-    [null] : 
-    ((n - 1) % 2 === 0 ?
-      oneFromEach([cBalanced((n - 1) / 2, val), cBalanced((n - 1) / 2, val)]) : 
-      oneFromEach([cBalanced(n / 2, val), cBalanced(n / 2 - 1, val)])
-      .reduce((acc, one) => [...acc, ...permutations(one)], [])
-    )
-    .reduce((acc, [left, right]) => 
-      [ ...acc, newNode(val, left, right) ], [])
+  const cBalancedMemo = n =>
+    memo[n] = memo[n] || (n % 2 === 1 ?
+      cBalancedMemo((n - 1) / 2)
+      .flatMap(l =>   
+        cBalancedMemo((n - 1) / 2)
+        .map(r => newNode(val, l, r))) :
+      cBalancedMemo(n / 2)
+      .flatMap(l =>
+        cBalancedMemo(n / 2 - 1)
+        .flatMap(r =>
+          [newNode(val, l, r), newNode(val, r, l)])))
+      
+  return cBalancedMemo(n)
+}
 
 // 56
 const isMirror = (left, right) =>
@@ -362,3 +350,34 @@ const constructTree = list =>
 const symmetricBalancedTrees = (n, val) =>
   n % 2 === 0 ? [] : cBalanced(n, val).filter(isSymmetric)
 
+// 59
+const hBalanced = (n, val) => {
+  const memo = { 0: [null], 1: [newNode(val, null, null)] }
+
+  const hBalancedMemo = n => 
+    memo[n] = memo[n] || (
+      hBalancedMemo(n - 1)
+      .flatMap(l =>
+        [ ...hBalancedMemo(n - 1).map(r => newNode(val, l, r)),
+          ...hBalancedMemo(n - 2).flatMap(r => [newNode(val, l, r), newNode(val, r, l)])]))
+
+  return hBalancedMemo(n)
+}
+
+// 60
+const maxHBalNodes = h => Math.pow(2, h) - 1
+
+const minHBalNodes = h => Math.pow(2, h - 1)
+
+const minHBalHeight = n => Math.ceil(Math.log2(n + 1))
+
+const nodeCount = t =>
+  (t ? nodeCount(t.left) + 1 + nodeCount(t.right) : 0)
+
+const nodeCountEql = n => t => nodeCount(t) === n
+
+const hBalancedWithNodes = n =>
+  [min = minHBalHeight(n), ...(maxHBalNodes(min) < n ? [min + 1] : [])]
+  .flatMap(h => hBalanced(h).filter(nodeCountEql(n)))
+
+console.log(hBalancedWithNodes(5))
