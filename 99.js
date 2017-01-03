@@ -380,4 +380,43 @@ const hBalancedWithNodes = n =>
   [min = minHBalHeight(n), ...(maxHBalNodes(min) < n ? [min + 1] : [])]
   .flatMap(h => hBalanced(h).filter(nodeCountEql(n)))
 
-console.log(hBalancedWithNodes(5))
+// 61
+const leafCount = t =>
+  !t ? 0 : !(t.left || t.right) ? 1 : leafCount(t.left) + leafCount(t.right)
+
+const leafList = t =>
+  !t ? [] : 
+    !(t.left || t.right) ? 
+      [t] : [...leafList(t.left), ...leafList(t.right)]
+
+// 62
+const innerList = t =>
+  !t || !(t.left || t.right) ? 
+    [] : [t, ...innerList(t.left), ...innerList(t.right)]
+
+// 63
+const completeHeight = n => Math.ceil(Math.log2(n + 1))
+
+const completeMaxLeaves = h => Math.pow(2, h - 1)
+
+const completeLeftRightCounts = n => {
+  let h = completeHeight(n)
+  let maxLeaves = completeMaxLeaves(h)
+  let leaves = n - (maxLeaves - 1)
+  return (
+    (leaves < maxLeaves / 2 ? 
+      [leaves, 0] : 
+      [maxLeaves / 2, leaves - maxLeaves / 2])
+    .map(n => n + maxLeaves / 2 - 1))
+}
+
+const completeBinaryTree = (n, val) =>
+  n <= 0 ? 
+    null : 
+    newNode(val, 
+      ...completeLeftRightCounts(n)
+      .map(k => completeBinaryTree(k, val)))
+
+console.log(completeLeftRightCounts(4))
+console.log(completeBinaryTree(4, 'x'))
+
