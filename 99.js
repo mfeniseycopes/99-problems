@@ -417,6 +417,16 @@ const completeBinaryTree = (n, val) =>
       ...completeLeftRightCounts(n)
       .map(k => completeBinaryTree(k, val)))
 
-console.log(completeLeftRightCounts(4))
-console.log(completeBinaryTree(4, 'x'))
+// 64
+const positionedNode = (val, left, depth, order, right) => 
+  ( { val, left, right, depth, order } )
 
+const positionedTree = (tree, depth = 0, order = 0) => 
+  !tree ? null :
+    positionedNode(
+      tree.val,
+      left = positionedTree(tree.left, depth + 1, order),
+      depth,
+      rootOrder = left ? left.order + 1 : order,
+      positionedTree(tree.right, depth + 1, rootOrder + 1)
+    )
