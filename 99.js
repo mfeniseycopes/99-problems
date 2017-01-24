@@ -418,7 +418,7 @@ const completeBinaryTree = (n, val) =>
       .map(k => completeBinaryTree(k, val)))
 
 // 64
-const positionedNode= (val, left, depth, order, right) => 
+const positionedNode = (val, left, depth, order, right) => 
   ( { val, left, right, depth, order } )
 
 const positionedTree1 = (tree, depth = 0, order = 0) => 
@@ -457,4 +457,20 @@ const positionedTree2 = (tree, depth = 0, order = 0, maxdepth = null) =>
           maxdepth - 1
         )
       )
+
+// 66
+
+const positionedNode3 = (val, left, right, depth, order, width) =>
+  ( { val, left, right, depth, order, width } )
+
+const positionedTree3 = (tree, depth = 0, order = 0) =>
+  !tree ? null :
+    positionedNode3(
+      tree.val,
+      left = positionedTree3(tree.left, depth + 1, order),
+      right = positionedTree3(tree.right, depth + 1, left ? left.width + 2 : order + 1),
+      depth,
+      left ? left.width + 1 : order,
+      ( left ? left.width : 0) + 1 + ( right ? right.width : 0 )
+    )
 
