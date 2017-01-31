@@ -459,7 +459,6 @@ const positionedTree2 = (tree, depth = 0, order = 0, maxdepth = null) =>
       )
 
 // 66
-
 const positionedNode3 = (val, left, right, depth, order, width) =>
   ( { val, left, right, depth, order, width } )
 
@@ -473,4 +472,46 @@ const positionedTree3 = (tree, depth = 0, order = 0) =>
       left ? left.width + 1 : order,
       ( left ? left.width : 0) + 1 + ( right ? right.width : 0 )
     )
+
+// 67
+const treeToString = tree =>
+  !tree ? '' :
+    tree.val.toString() + '(' + treeToString(tree.left) + ',' + treeToString(tree.right) + ')'
+
+const parensBalancePt = str => {
+  let bal = 0
+  let pt = -1
+  
+  for (let i = 0; i < str.length; i++) {
+    switch(str[i]) {
+      case '(': 
+        bal++
+        break;
+      case ')': 
+        bal--
+        break;
+      case ',': 
+        bal === 0 ? (pt === -1 ? pt = i : null) : null
+        break;
+    }
+  }
+
+  return [ str.substring(0, pt), str.substring(pt + 1) ] 
+}
+
+const treeFromString = str => {
+  if (!str) return null
+
+  const childStart = str.indexOf('(')
+
+  if (childStart !== -1) {
+    const childrenStr = str.substring(childStart + 1, str.length - 1)
+    const [left, right] = parensBalancePt(childrenStr)
+    return newNode(str.substring(0, childStart), treeFromString(left), treeFromString(right))
+  } else {
+    return newNode(str)
+  }
+}
+
+console.log(treeFromString("a(b(d,e),c(,f(g,)))"))
 
