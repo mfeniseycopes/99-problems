@@ -100,11 +100,11 @@ const range = (start, end) =>
 
 // 23
 const randomSelect = (n, list) => {
-    const selected = {}
-    const nextRandomUniq = () => {
-      let i = Math.floor(Math.random() * length(list))
-      return selected[i] ? nextRandomUniq() : selected[i] = true && list[i]
-    }
+  const selected = {}
+  const nextRandomUniq = () => {
+  let i = Math.floor(Math.random() * length(list))
+    return selected[i] ? nextRandomUniq() : selected[i] = true && list[i]
+  }
 
   return Array.from({ length: n }, () => nextRandomUniq())
 }
@@ -513,5 +513,4 @@ const treeFromString = str => {
   }
 }
 
-console.log(treeFromString("a(b(d,e),c(,f(g,)))"))
 
